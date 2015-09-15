@@ -18,9 +18,11 @@ public class MainActivity extends ActionBarActivity {
 	private TextView txt_date;
 	private TextView txt_time;
 	private TextView txt_counter;
+	private StatisticsDataSource statistics;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		Debug.enable();
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
@@ -29,7 +31,9 @@ public class MainActivity extends ActionBarActivity {
 		txt_counter = (TextView) findViewById(R.id.txt_counter);
 		
 		//init counter
-		txt_counter.setText("0");
+		statistics = new StatisticsDataSource(this.getApplicationContext());
+		int total = statistics.getTotalCounts();
+		txt_counter.setText(Integer.toString(total));
 	}
 
 
@@ -59,6 +63,7 @@ public class MainActivity extends ActionBarActivity {
 		Integer count = Integer.parseInt(txt_counter.getText().toString());
 		count++;
 		txt_counter.setText(count.toString());
+		int id_category = 1;
 
 		Calendar c = Calendar.getInstance();
 
@@ -70,6 +75,30 @@ public class MainActivity extends ActionBarActivity {
 		String formatted_time = tf.format(c.getTime());
 		txt_time.setText(formatted_time);
 
+		statistics.saveCount(c.getTime(),id_category);
 	}
 
+	@Override
+	protected void onResume() {
+		statistics.open();
+		super.onResume();
+	}
+
+	@Override
+	protected void onPause() {
+		statistics.close();
+		super.onPause();
+	}
+
+	@Override
+	public void onStop(){
+		statistics.close();
+		super.onStop();
+	}
+
+	@Override
+	public void onDestroy(){
+		statistics.close();
+		super.onDestroy();
+	}
 }
