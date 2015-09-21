@@ -50,10 +50,23 @@ public class MainActivity extends ActionBarActivity {
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-		if (id == R.id.action_settings) {
+		switch(id)
+		{
+			case R.id.categories:
+			runCategoriesActivity(null);
+			return true;
+		case R.id.exit:
+			finish();
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	/** Launches the Categories Activity
+	 */
+	private void runCategoriesActivity(Object object) {
+		// TODO Auto-generated method stub
+
 	}
 
 	/** function called when the counter button is pressed

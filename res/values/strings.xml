@@ -7,4 +7,6 @@
     <string name="fecha">Fecha:&#160;</string>
     <string name="total">Total:&#160;</string>
     <string name="hora">Hora:&#160;&#160;</string>
+    <string name="categories">Categorias</string>
+    <string name="exit">Salir</string>
 </resources>
