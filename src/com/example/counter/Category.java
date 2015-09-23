@@ -12,7 +12,7 @@ public class Category {
 		this.in_use = false;
 	}
 
-	public int getId(int id)
+	public int getId()
 	{
 		return this.id;
 	}

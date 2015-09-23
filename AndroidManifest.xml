@@ -22,6 +22,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:label="@string/categories" android:name=".CategoriesActivity"></activity>
     </application>
 
 </manifest>

@@ -153,11 +153,51 @@ public class StatisticsDataSource {
 	}
 
 	private Count cursorToCount(Cursor cursor) {
+		Debug.log("Cursor to Count");
 		Count count = new Count();
 		count.setDate(cursor.getLong(0));
 		count.setCategoryId(cursor.getInt(1));
 
 		return count;
+	}
+
+	private Category cursorToCategory(Cursor cursor) {
+		Debug.log("Cursor to Category");
+		Category cat = new Category();
+		cat.setId(cursor.getInt(0));
+		cat.setName(cursor.getString(1));
+		cat.setInUse(cursor.getInt(2) != 0);
+
+		return cat;
+	}
+
+	/** returns an array containing all categories
+	 */
+	public ArrayList<Category> getArrayCategories() {
+
+		ArrayList<Category> array_categories = new ArrayList<Category>();
+
+		Cursor cursor = db.rawQuery("Select * from Categories",null);
+		Debug.log("Select * from Categories");
+
+		cursor.moveToFirst();
+		while (!cursor.isAfterLast()) {
+			Category cat = cursorToCategory(cursor);
+			array_categories.add(cat);
+			cursor.moveToNext();
+		}
+		// make sure to close the cursor
+		cursor.close();
+		return array_categories;
+	}
+
+	/** Stores a new category in the database
+	 */
+	public void saveCategory(Category cat)
+	{
+		int in_use = cat.isBeingUsed()? 1:0;
+		Debug.log("INSERT INTO Categories (name,in_use) VALUES ('"+cat.getName()+"',"+in_use+")");
+		this.db.execSQL("INSERT INTO Categories (name,in_use) VALUES ('"+cat.getName()+"',"+in_use+")");
 	}
 
 }

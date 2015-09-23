@@ -9,4 +9,8 @@
     <string name="hora">Hora:&#160;&#160;</string>
     <string name="categories">Categorias</string>
     <string name="exit">Salir</string>
+    <string name="title_activity_categories">CategoriesActivity</string>
+    <string name="new_category">New Category</string>
+    <string name="name_category">Name Category</string>
+
 </resources>

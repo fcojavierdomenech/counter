@@ -3,6 +3,7 @@ package com.example.counter;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -65,7 +66,8 @@ public class MainActivity extends ActionBarActivity {
 	/** Launches the Categories Activity
 	 */
 	private void runCategoriesActivity(Object object) {
-		// TODO Auto-generated method stub
+		Intent i = new Intent(this,CategoriesActivity.class);
+		startActivity(i);
 
 	}
 
