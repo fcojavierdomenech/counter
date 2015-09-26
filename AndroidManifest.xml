@@ -22,7 +22,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:label="@string/categories" android:name=".CategoriesActivity"></activity>
+	<activity android:label="@string/categories" android:name=".CategoriesActivity" android:windowSoftInputMode="adjustPan"	></activity>
     </application>
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
