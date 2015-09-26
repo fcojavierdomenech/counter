@@ -33,8 +33,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		db.execSQL(
 				"Create table Categories ("+
 				"_id INTEGER PRIMARY KEY AUTOINCREMENT,"+
-				"name VARCHAR(20),"+
-				"in_use INTEGER DEFAULT 0"+
+				"name VARCHAR(20)"+
 				")"
 			  );
 		
@@ -49,8 +48,20 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 				")"
 			  );
 
+		//Create table CategoryInUse
 		db.execSQL(
-				"INSERT INTO Categories (name,in_use) VALUES ('default',1)"
+				"Create table CategoryInUse ("+
+				"id_category INTEGER,"+
+				"FOREIGN KEY (id_category) REFERENCES Categories(_id) "+
+				")"
+			  );
+
+		//Inserts a default category
+		db.execSQL(
+				"INSERT INTO Categories (name) VALUES ('default')"
+			  );
+		db.execSQL(
+				"INSERT INTO CategoryInUse (id_category) VALUES (1)"
 			  );
 
 	}

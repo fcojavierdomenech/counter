@@ -63,7 +63,7 @@ public class CategoriesListViewAdapter extends BaseAdapter {
 				@Override
 				public void onClick(View v)
 				{
-					editName(v);
+					editName(v,position);
 				}
 			});
 
@@ -72,7 +72,7 @@ public class CategoriesListViewAdapter extends BaseAdapter {
 				@Override
 				public void onClick(View v)
 				{
-					deleteRow(v,position);
+					deleteRow(position);
 				}
 			});
 
@@ -81,7 +81,7 @@ public class CategoriesListViewAdapter extends BaseAdapter {
 				@Override
 				public void onClick(View v)
 				{
-					resetCategory(v,position);
+					resetCategory(position);
 				}
 			});
 		}
@@ -91,12 +91,12 @@ public class CategoriesListViewAdapter extends BaseAdapter {
 		return view;
 	}
 
-	public void editName(View v)
+	public void editName(View v, int position)
 	{
 		Debug.log("Edit name");
 		View row_view = (View) v.getParent();
-
 		EditText txt_name = (EditText) row_view.findViewById(R.id.txt_row_category_name);
+		Category cat = list.get(position);
 
 		//if not yet editable
 		if(!txt_name.isEnabled())
@@ -104,26 +104,41 @@ public class CategoriesListViewAdapter extends BaseAdapter {
 			txt_name.setEnabled(true);
 			v.setBackgroundResource(android.R.drawable.ic_menu_save);
 		}else{
-			txt_name.setEnabled(false);
-			v.setBackgroundResource(android.R.drawable.ic_menu_edit);
-			//Todo: save name
+			String name = txt_name.getText().toString();
+			if(name != "")
+			{
+				txt_name.setEnabled(false);
+				v.setBackgroundResource(android.R.drawable.ic_menu_edit);
+				//Todo: save name
+				cat.setName(name);
+				if(this.context instanceof CategoriesActivity){
+					((CategoriesActivity)this.context).updateCategory(cat);
+				}
+			}
 		}
 
 		notifyDataSetChanged();
 	}
 
-	public void deleteRow(View v, int position)
+	public void deleteRow(int position)
 	{
 		Debug.log("Delete Row");
+		Category cat = list.get(position);
+		if(this.context instanceof CategoriesActivity){
+			((CategoriesActivity)this.context).deleteCategory(cat);
+		}
+		
 		list.remove(position);
-		//Todo: remove item from DB
 		notifyDataSetChanged();
 	}
 
-	public void resetCategory(View v, int position)
+	public void resetCategory(int position)
 	{
 		Debug.log("Reset Category");
-		//Todo: reset counter for this category
+		Category cat = list.get(position);
+		if(this.context instanceof CategoriesActivity){
+			((CategoriesActivity)this.context).resetCategory(cat);
+		}
 		notifyDataSetChanged();
 	}
 

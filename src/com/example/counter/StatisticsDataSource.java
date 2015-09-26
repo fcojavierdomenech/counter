@@ -23,17 +23,15 @@ public class StatisticsDataSource {
 	public StatisticsDataSource(Context context) {
 		this.db_helper = new DatabaseHelper(context);
 		this.open();
-		//by default current category is 1, pointing to the default category
-		this.id_category = getCategoryInUse();
-		//fixme: id_category should be set to the current category: getCurrentCategory(), 
-		//which returns the current category in use
 	}
 
 	/**
-	 * Opens connection
+	 * Opens connection and updates the category in use
+	 * id_category is set to the current category: getCurrentCategory(), 
 	 */
 	public void open() throws SQLException{
 		this.db = this.db_helper.getWritableDatabase();
+		this.id_category = getCategoryInUse();
 	}
 
 	/**
@@ -54,11 +52,21 @@ public class StatisticsDataSource {
 	 * Stores a count
 	 * @param date when the count was given
 	 * @param id_category id of the category which counted
+	 * @param rating 
+	 */
+	public void saveCount(Date date,int id_category, int rating)
+	{
+		Debug.log("INSERT INTO Counts (date,id_category,rating) VALUES ('"+date.getTime()+"',"+id_category+","+rating+")");
+		this.db.execSQL("INSERT INTO Counts (date,id_category,rating) VALUES ('"+date.getTime()+"',"+id_category+","+rating+")");
+	}
+	/**
+	 * Stores a count
+	 * @param date when the count was given
+	 * @param id_category id of the category which counted
 	 */
 	public void saveCount(Date date,int id_category)
 	{
-		Debug.log("INSERT INTO Counts (date,id_category) VALUES ('"+date.getTime()+"',"+id_category+")");
-		this.db.execSQL("INSERT INTO Counts (date,id_category) VALUES ('"+date.getTime()+"',"+id_category+")");
+		saveCount(date,id_category,0);
 	}
 
 	/** 
@@ -101,13 +109,13 @@ public class StatisticsDataSource {
 	}
 
 	/** 
-	 * Returns the category marked as 'in_use' in the database
+	 * Returns the category selected in the database
 	 * */
 	public int getCategoryInUse(){
 		int result = 0;
 		String sql;
 
-		sql = "Select _id from Categories where in_use = 1";
+		sql = "Select id_category from CategoryInUse";
 		Debug.log(sql);
 
 		Cursor cursor = db.rawQuery(sql,null);
@@ -166,7 +174,6 @@ public class StatisticsDataSource {
 		Category cat = new Category();
 		cat.setId(cursor.getInt(0));
 		cat.setName(cursor.getString(1));
-		cat.setInUse(cursor.getInt(2) != 0);
 
 		return cat;
 	}
@@ -193,11 +200,39 @@ public class StatisticsDataSource {
 
 	/** Stores a new category in the database
 	 */
-	public void saveCategory(Category cat)
+	public void createCategory(Category cat)
 	{
-		int in_use = cat.isBeingUsed()? 1:0;
-		Debug.log("INSERT INTO Categories (name,in_use) VALUES ('"+cat.getName()+"',"+in_use+")");
-		this.db.execSQL("INSERT INTO Categories (name,in_use) VALUES ('"+cat.getName()+"',"+in_use+")");
+		Debug.log("INSERT INTO Categories (name) VALUES ('"+cat.getName()+"')");
+		this.db.execSQL("INSERT INTO Categories (name) VALUES ('"+cat.getName()+"')");
 	}
 
+	/** Updates an existing category
+	*/
+	public void updateCategory(Category cat) {
+		Debug.log("UPDATE Categories SET name = '"+cat.getName()+"' where _id = "+cat.getId());
+		this.db.execSQL("UPDATE Categories SET name = '"+cat.getName()+"' where _id = "+cat.getId());
+		
+	}
+
+	/** Sets the category in use
+	 */
+	public void setCategoryInUse(Category cat)
+	{
+		Debug.log("Update CategoryInUse SET id_category = "+cat.getId());
+		this.db.execSQL("Update CategoryInUse SET id_category = "+cat.getId());
+	}
+
+	/** Deletes an existing category
+	*/
+	public void deleteCategory(Category cat) {
+		Debug.log("DELETE FROM Categories WHERE _id ="+cat.getId());
+		this.db.execSQL("DELETE FROM Categories WHERE _id ="+cat.getId());
+	}
+
+	/** reset the counts for a category
+	*/
+	public void resetCategory(Category cat) {
+		Debug.log("DELETE FROM Counts WHERE category_id ="+cat.getId());
+		this.db.execSQL("DELETE FROM Counts WHERE _id ="+cat.getId());
+	}
 }
