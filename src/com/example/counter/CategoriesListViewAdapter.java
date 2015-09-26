@@ -2,7 +2,9 @@ package com.example.counter;
 
 import java.util.ArrayList;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -120,26 +122,91 @@ public class CategoriesListViewAdapter extends BaseAdapter {
 		notifyDataSetChanged();
 	}
 
-	public void deleteRow(int position)
+	public void deleteRow(final int position)
 	{
-		Debug.log("Delete Row");
-		Category cat = list.get(position);
-		if(this.context instanceof CategoriesActivity){
-			((CategoriesActivity)this.context).deleteCategory(cat);
-		}
-		
-		list.remove(position);
-		notifyDataSetChanged();
+		final Context context = this.context;
+		final ArrayList<Category> list = this.list;
+
+		//alert dialog
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+				context);
+
+		// set title
+		alertDialogBuilder.setTitle("Delete Category");
+
+		// set dialog message
+		alertDialogBuilder
+			.setMessage("Delete category?")
+			.setCancelable(false)
+			.setPositiveButton("Yes",new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog,int id) {
+
+					Debug.log("Delete Row");
+					Category cat = list.get(position);
+					if(context instanceof CategoriesActivity){
+						((CategoriesActivity)context).deleteCategory(cat);
+					}
+
+					list.remove(position);
+					notifyDataSetChanged();
+				}
+			})
+		.setNegativeButton("No",new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog,int id) {
+				// if this button is clicked, just close
+				// the dialog box and do nothing
+				dialog.cancel();
+			}
+		});
+
+		// create alert dialog
+		AlertDialog alertDialog = alertDialogBuilder.create();
+
+		// show it
+		alertDialog.show();	
+
 	}
 
-	public void resetCategory(int position)
+	public void resetCategory(final int position)
 	{
-		Debug.log("Reset Category");
-		Category cat = list.get(position);
-		if(this.context instanceof CategoriesActivity){
-			((CategoriesActivity)this.context).resetCategory(cat);
-		}
-		notifyDataSetChanged();
+		final Context context = this.context;
+
+		//alert dialog
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+				context);
+
+		// set title
+		alertDialogBuilder.setTitle("Reset Category");
+
+		// set dialog message
+		alertDialogBuilder
+			.setMessage("This will delete all the counts for the category.\r\nAre you sure?")
+			.setCancelable(false)
+			.setPositiveButton("Yes",new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog,int id) {
+
+					Debug.log("Reset Category");
+					Category cat = list.get(position);
+					if(context instanceof CategoriesActivity){
+						((CategoriesActivity)context).resetCategory(cat);
+					}
+					notifyDataSetChanged();
+				}
+			})
+		.setNegativeButton("No",new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog,int id) {
+				// if this button is clicked, just close
+				// the dialog box and do nothing
+				dialog.cancel();
+			}
+		});
+
+		// create alert dialog
+		AlertDialog alertDialog = alertDialogBuilder.create();
+
+		// show it
+		alertDialog.show();	
+		
 	}
 
 

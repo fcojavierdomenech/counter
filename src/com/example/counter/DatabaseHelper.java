@@ -43,6 +43,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 				"_id INTEGER PRIMARY KEY AUTOINCREMENT,"+
 				"date DATE,"+
 				"id_category INTEGER,"+
+				"rating INTEGER,"+
 			        "FOREIGN KEY (id_category) REFERENCES Categories(_id) "+
 				"ON DELETE CASCADE"+
 				")"
