@@ -53,22 +53,32 @@ public class MainActivity extends ActionBarActivity {
 		int id = item.getItemId();
 		switch(id)
 		{
-			case R.id.categories:
-			runCategoriesActivity(null);
+		case R.id.categories:
+			runCategoriesActivity();
 			return true;
 		case R.id.exit:
 			finish();
 			return true;
+		case R.id.statistics:
+			runStatistics();
+			return true;
 		}
+
 		return super.onOptionsItemSelected(item);
 	}
 
 	/** Launches the Categories Activity
 	 */
-	private void runCategoriesActivity(Object object) {
+	private void runCategoriesActivity() {
 		Intent i = new Intent(this,CategoriesActivity.class);
 		startActivity(i);
+	}
 
+	/** Launches the Categories Activity
+	*/
+	private void runStatistics() {
+		Intent i = new Intent(this,StatisticsActivity.class);
+		startActivity(i);
 	}
 
 	/** function called when the counter button is pressed
@@ -78,7 +88,6 @@ public class MainActivity extends ActionBarActivity {
 		Integer count = Integer.parseInt(txt_counter.getText().toString());
 		count++;
 		txt_counter.setText(count.toString());
-		int id_category = 1;
 
 		Calendar c = Calendar.getInstance();
 
@@ -90,12 +99,15 @@ public class MainActivity extends ActionBarActivity {
 		String formatted_time = tf.format(c.getTime());
 		txt_time.setText(formatted_time);
 
+		int id_category = statistics.getCategory();
 		statistics.saveCount(c.getTime(),id_category);
 	}
 
 	@Override
 	protected void onResume() {
 		statistics.open();
+		int total = statistics.getTotalCounts();
+		txt_counter.setText(Integer.toString(total));
 		super.onResume();
 	}
 

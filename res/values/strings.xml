@@ -12,5 +12,7 @@
     <string name="title_activity_categories">CategoriesActivity</string>
     <string name="new_category">New Category</string>
     <string name="name_category">Name Category</string>
+    <string name="title_activity_statistics">StatisticsActivity</string>
+    <string name="statistics">Statistics</string>
 
 </resources>
