@@ -232,7 +232,14 @@ public class StatisticsDataSource {
 	/** reset the counts for a category
 	*/
 	public void resetCategory(Category cat) {
-		Debug.log("DELETE FROM Counts WHERE category_id ="+cat.getId());
-		this.db.execSQL("DELETE FROM Counts WHERE _id ="+cat.getId());
+		Debug.log("DELETE FROM Counts WHERE id_category ="+cat.getId());
+		this.db.execSQL("DELETE FROM Counts WHERE id_category ="+cat.getId());
+	}
+
+	/** select the counts for a category
+	*/
+	public void selectCategory(Category cat) {
+		Debug.log("UPDATE CategoryInUse set id_category ="+cat.getId());
+		this.db.execSQL("UPDATE CategoryInUse set id_category ="+cat.getId());
 	}
 }
