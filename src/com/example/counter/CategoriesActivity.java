@@ -5,7 +5,7 @@ package com.example.counter;
 
 import java.util.ArrayList;
 
-import android.app.ListActivity;
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
@@ -15,35 +15,49 @@ import android.widget.TextView;
  * @author vivo
  *
  */
-public class CategoriesActivity extends ListActivity {
+public class CategoriesActivity extends Activity {
 
 	private StatisticsDataSource statistics;
 	private ArrayList<Category> arraylist_categories;
 	private CategoriesListViewAdapter adapter;
 
 	@Override
-	public void onCreate(Bundle savedInstanceState)
-	{
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Debug.log("init categories activity");
-		statistics = new StatisticsDataSource(this.getApplicationContext());
 		setContentView(R.layout.activity_categories);
+		statistics = new StatisticsDataSource(this.getApplicationContext());
 
 		arraylist_categories = statistics.getArrayCategories();
 
 		adapter = new CategoriesListViewAdapter(arraylist_categories, this);
-		setListAdapter(adapter);
+
+		ListView list_view = (ListView) this.findViewById(android.R.id.list);
+		list_view.setAdapter(adapter);
 
 		//Scrolling on top
 		scrollMyListViewToPos(0);
 
 		//on top of listview
-		ListView list_view = (ListView) this.findViewById(android.R.id.list);
+		//ListView list_view = (ListView) this.findViewById(android.R.id.list);
+		//ListView list_view = getListView();
 		list_view.setSelectionAfterHeaderView();
+
 		//final ListView list_view = (ListView) this.findViewById(android.R.id.list);
 		//list_view.setSelectionAfterHeaderView();;
 		//list_view.smoothScrollToPosition(0);
 	}
+
+	/*
+	@Override
+	protected void onListItemClick(ListView list_view, View view, int position, long id)
+	{
+		super.onListItemClick(list_view, view, position, id);
+		//Object o = getListAdapter().getItem(position);
+		Debug.log("onListItemClick");
+		view.setSelected(true);
+	}
+	*/
 
 	/** saves a new category
 	 */
@@ -86,6 +100,18 @@ public class CategoriesActivity extends ListActivity {
 	{
 		Debug.log("CategoriesActivity runs resetCategory");
 		statistics.resetCategory(cat);
+	}
+
+	/** resets category count
+	 * this means all counts of this category will be reset
+	 * it ends the current activity
+	 * @param cat Category
+	 */
+	public void selectCategory(Category cat)
+	{
+		Debug.log("CategoriesActivity runs selectCategory");
+		statistics.selectCategory(cat);
+		finish();
 	}
 
 	/** deletes an existing category

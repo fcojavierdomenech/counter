@@ -8,10 +8,12 @@ import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 public class CategoriesListViewAdapter extends BaseAdapter {
 	private ArrayList<Category> list = new ArrayList<Category>();
@@ -53,63 +55,92 @@ public class CategoriesListViewAdapter extends BaseAdapter {
 
 		if(cat != null)
 		{
-			EditText txt_name = (EditText) view.findViewById(R.id.txt_row_category_name);
+			final EditText edittxt = (EditText) view.findViewById(R.id.edittxt_row_category_name);
+			TextView txt = (TextView) view.findViewById(R.id.txt_row_category_name);
 			Button btn_edit = (Button) view.findViewById(R.id.btn_row_category_edit);
 			Button btn_delete = (Button) view.findViewById(R.id.btn_row_category_delete);
 			Button btn_reset = (Button) view.findViewById(R.id.btn_row_category_reset);
 
-			txt_name.setText(cat.getName());
+			edittxt.setText(cat.getName());
+			txt.setText(cat.getName());
 
 			//OnClick edit
 			btn_edit.setOnClickListener(new View.OnClickListener(){
 				@Override
 				public void onClick(View v)
-				{
-					editName(v,position);
-				}
+			{
+				editName(v,position);
+			}
 			});
 
 			//OnClick delete 
 			btn_delete.setOnClickListener(new View.OnClickListener(){
 				@Override
 				public void onClick(View v)
-				{
-					deleteRow(position);
-				}
+			{
+				deleteRow(position);
+			}
 			});
 
 			//OnClick reset 
 			btn_reset.setOnClickListener(new View.OnClickListener(){
 				@Override
 				public void onClick(View v)
-				{
-					resetCategory(position);
-				}
+			{
+				resetCategory(position);
+			}
 			});
+
+			txt.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					Debug.log("call on txtview onClickListener: Stablish as selected category");
+					selectCategory(position);
+				}
+
+			});
+
+			//once is shown we want it to request focus
+
+			edittxt.post(new Runnable() {
+				public void run() {
+					edittxt.requestFocusFromTouch();
+					edittxt.selectAll();
+					InputMethodManager lManager = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE); 
+					lManager.showSoftInput(edittxt, 0);
+				}
+			});	
 		}
-
-
 
 		return view;
 	}
 
+	/** switches between the TextView and the EditText
+	 * if EditText is shown also updates the category
+	 * @param View v
+	 * @param int position
+	 */
 	public void editName(View v, int position)
 	{
 		Debug.log("Edit name");
 		View row_view = (View) v.getParent();
-		EditText txt_name = (EditText) row_view.findViewById(R.id.txt_row_category_name);
+		EditText edittxt_name = (EditText) row_view.findViewById(R.id.edittxt_row_category_name);
+		TextView txt_name = (TextView) row_view.findViewById(R.id.txt_row_category_name);
 		Category cat = list.get(position);
 
 		//if not yet editable
-		if(!txt_name.isEnabled())
+		if(!edittxt_name.isShown())
 		{
-			txt_name.setEnabled(true);
+			edittxt_name.setVisibility(View.VISIBLE);
+			txt_name.setVisibility(View.GONE);
 			v.setBackgroundResource(android.R.drawable.ic_menu_save);
 		}else{
-			String name = txt_name.getText().toString();
+			String name = edittxt_name.getText().toString();
 			if(name != "")
 			{
-				txt_name.setEnabled(false);
+				edittxt_name.setVisibility(View.GONE);
+				txt_name.setVisibility(View.VISIBLE);
+				txt_name.setText(name);
 				v.setBackgroundResource(android.R.drawable.ic_menu_edit);
 				//Todo: save name
 				cat.setName(name);
@@ -122,6 +153,9 @@ public class CategoriesListViewAdapter extends BaseAdapter {
 		notifyDataSetChanged();
 	}
 
+	/** deletes the category
+	 * @param position
+	 */
 	public void deleteRow(final int position)
 	{
 		final Context context = this.context;
@@ -167,6 +201,9 @@ public class CategoriesListViewAdapter extends BaseAdapter {
 
 	}
 
+	/** resets the counts for the category selected
+	 * @param position
+	 */
 	public void resetCategory(final int position)
 	{
 		final Context context = this.context;
@@ -209,6 +246,49 @@ public class CategoriesListViewAdapter extends BaseAdapter {
 		
 	}
 
+	/** selects the category as in use
+	 * @param position
+	 */
+	public void selectCategory(final int position)
+	{
+		final Context context = this.context;
+
+		//alert dialog
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+				context);
+
+		// set title
+		alertDialogBuilder.setTitle("Select Category");
+
+		// set dialog message
+		alertDialogBuilder
+			.setMessage("Select category?")
+			.setCancelable(false)
+			.setPositiveButton("Yes",new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog,int id) {
+
+					Debug.log("Select Category");
+					Category cat = list.get(position);
+					if(context instanceof CategoriesActivity){
+						((CategoriesActivity)context).selectCategory(cat);
+					}
+				}
+			})
+		.setNegativeButton("No",new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog,int id) {
+				// if this button is clicked, just close
+				// the dialog box and do nothing
+				dialog.cancel();
+			}
+		});
+
+		// create alert dialog
+		AlertDialog alertDialog = alertDialogBuilder.create();
+
+		// show it
+		alertDialog.show();	
+
+	}
 
 	public View getViewByPosition(int pos, ListView listView) {
 		final int firstListItemPosition = listView.getFirstVisiblePosition();
