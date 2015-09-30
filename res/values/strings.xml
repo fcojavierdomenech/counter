@@ -12,7 +12,10 @@
     <string name="title_activity_categories">CategoriesActivity</string>
     <string name="new_category">New Category</string>
     <string name="name_category">Name Category</string>
-    <string name="title_activity_statistics">StatisticsActivity</string>
+    <string name="title_activity_datestatistics">Daily statistics</string>
+    <string name="title_activity_alltimestatistics">Global Statistics</string>
     <string name="statistics">Statistics</string>
+    <string name="alltime_statistics">Global Statistics</string>
+    <string name="date_statistics">Daily Statistics</string>
 
 </resources>

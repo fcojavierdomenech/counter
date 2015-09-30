@@ -42,6 +42,9 @@ public class MainActivity extends ActionBarActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
+		MenuItem submenu = menu.findItem(R.id.statistics);
+		getMenuInflater().inflate(R.menu.sub_menu, submenu.getSubMenu());
+		
 		return true;
 	}
 
@@ -59,7 +62,7 @@ public class MainActivity extends ActionBarActivity {
 		case R.id.exit:
 			finish();
 			return true;
-		case R.id.statistics:
+		case R.id.alltime_statistics:
 			runStatistics();
 			return true;
 		}
@@ -77,7 +80,7 @@ public class MainActivity extends ActionBarActivity {
 	/** Launches the Categories Activity
 	*/
 	private void runStatistics() {
-		Intent i = new Intent(this,StatisticsActivity.class);
+		Intent i = new Intent(this,AlltimeStatisticsActivity.class);
 		startActivity(i);
 	}
 

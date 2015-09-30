@@ -128,6 +128,26 @@ public class StatisticsDataSource {
 		return result;
 	}
 
+	/** 
+	 * Returns the name of a category
+	 * @param id_category
+	 * */
+	public String getCategoryName(int id_category){
+		String result = "";
+		String sql;
+
+		sql = "Select name from Categories where _id="+id_category;
+		Debug.log(sql);
+
+		Cursor cursor = db.rawQuery(sql,null);
+		DatabaseUtils.dumpCursor(cursor);
+
+		if(cursor.moveToFirst())
+			result = cursor.getString(0);
+		cursor.close();
+
+		return result;
+	}
 
 	/** 
 	 * Lists all the counts for the current category
@@ -143,11 +163,14 @@ public class StatisticsDataSource {
 		return this.id_category;
 	}
 
-	public List<Count> getAllCounts() {
+	/** returns a list of counts for all categories for a specific date
+	 */
+	public List<Count> getAllCategoriesCountsByDate(long date) {
+		//ToDo
 		List<Count> counts = new ArrayList<Count>();
 
-		Cursor cursor = db.rawQuery("Select date from Counts where _id = "+this.getCategory(),null);
-		System.out.println("Select date from Counts where _id = "+this.getCategory());
+		Cursor cursor = db.rawQuery("Select date,id_category from Counts where id_category = "+this.getCategory(),null);
+		System.out.println("Select date,id_category from Counts where id_category = "+this.getCategory());
 
 		cursor.moveToFirst();
 		while (!cursor.isAfterLast()) {
@@ -160,11 +183,83 @@ public class StatisticsDataSource {
 		return counts;
 	}
 
+	/** returns a lists of counts grouped per day for all categories
+	 */
+	public List<GroupCount> getAllCategoriesCountsGroupedByDate() {
+		List<GroupCount> counts = new ArrayList<GroupCount>();
+
+		//Cursor cursor = db.rawQuery("select strftime('%d-%m-%Y',  date/1000,'unixepoch') as date, id_category,count(*) AS counts_per_day from Counts group by strftime('%d-%m-%Y', date/1000,'unixepoch'),id_category",null);
+		//System.out.println("select strftime('%d-%m-%Y',  date/1000,'unixepoch') as date, id_category,count(*) AS counts_per_day from Counts group by strftime('%d-%m-%Y', date/1000,'unixepoch'),id_category");
+		Cursor cursor = db.rawQuery("select date, id_category,count(*) AS counts_per_day from Counts group by strftime('%d-%m-%Y', date/1000,'unixepoch'),id_category",null);
+		System.out.println("select date, id_category,count(*) AS counts_per_day from Counts group by strftime('%d-%m-%Y', date/1000,'unixepoch'),id_category");
+
+		cursor.moveToFirst();
+		while (!cursor.isAfterLast()) {
+			GroupCount count = cursorToGroupCount(cursor);
+			counts.add(count);
+			cursor.moveToNext();
+		}
+		// make sure to close the cursor
+		cursor.close();
+		return counts;
+	}
+
+	/** returns a list of counts for the current category for a specific date 
+	*/
+	public List<Count> getCurrentCategoryCountsByDate() {
+		//ToDo
+		List<Count> counts = new ArrayList<Count>();
+
+		Cursor cursor = db.rawQuery("Select date,id_category from Counts where id_category = "+this.getCategory(),null);
+		System.out.println("Select date,id_category from Counts where id_category = "+this.getCategory());
+
+		cursor.moveToFirst();
+		while (!cursor.isAfterLast()) {
+			Count count = cursorToCount(cursor);
+			counts.add(count);
+			cursor.moveToNext();
+		}
+		// make sure to close the cursor
+		cursor.close();
+		return counts;
+	}
+
+	/** returns a lists of counts grouped per day for the current category
+	*/
+	public List<GroupCount> getCurrentCategoryCountsGroupedByDate() {
+		List<GroupCount> counts = new ArrayList<GroupCount>();
+
+		Cursor cursor = db.rawQuery("select strftime('%d-%m-%Y',  date/1000,'unixepoch') as date, id_category,count(*) AS counts_per_day from Counts where id_category = "+this.getCategory()+" group by strftime('%d-%m-%Y', date/1000,'unixepoch')",null);
+		System.out.println("select strftime('%d-%m-%Y',  date/1000,'unixepoch') as date, id_category,count(*) AS counts_per_day from Counts where id_category = "+this.getCategory()+" group by strftime('%d-%m-%Y', date/1000,'unixepoch')");
+
+		cursor.moveToFirst();
+		while (!cursor.isAfterLast()) {
+			GroupCount count = cursorToGroupCount(cursor);
+			counts.add(count);
+			cursor.moveToNext();
+		}
+		// make sure to close the cursor
+		cursor.close();
+		return counts;
+	}
+
+
 	private Count cursorToCount(Cursor cursor) {
 		Debug.log("Cursor to Count");
 		Count count = new Count();
 		count.setDate(cursor.getLong(0));
 		count.setCategoryId(cursor.getInt(1));
+
+		return count;
+	}
+
+
+	private GroupCount cursorToGroupCount(Cursor cursor) {
+		Debug.log("Cursor to GroupCount");
+		GroupCount count = new GroupCount();
+		count.setDate(cursor.getLong(0));
+		count.setCategoryId(cursor.getInt(1));
+		count.setCounts(cursor.getInt(2));
 
 		return count;
 	}

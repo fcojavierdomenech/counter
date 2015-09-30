@@ -27,10 +27,14 @@
             android:label="@string/categories"
             android:windowSoftInputMode="adjustPan" >
         </activity>
-        <activity
-            android:name=".StatisticsActivity"
-            android:label="@string/title_activity_statistics" >
-        </activity>
+	<activity
+			android:name=".AlltimeStatisticsActivity"
+			android:label="@string/title_activity_alltimestatistics" >
+	</activity>
+	<activity
+			android:name=".DateStatisticsActivity"
+			android:label="@string/title_activity_datestatistics" >
+	</activity>
     </application>
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
